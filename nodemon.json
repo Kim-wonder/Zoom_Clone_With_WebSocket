@@ -1,3 +1,4 @@
+//nodemon = 프로젝트를 살펴보고 변경사항이 있을 시 서버를 재시작해주는 프로그램
 {
     "ignore": ["src/public/*"],
     "exec": "babel-node src/server.js"
