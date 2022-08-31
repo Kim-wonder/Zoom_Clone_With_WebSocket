@@ -11,7 +11,8 @@
 // 하지만 server.js에서 저장을 하면 터미널이 움직이는 걸 볼 수 있다.
 
 // alert('hello world!');
-
+const messageList = document.querySelector("ul");
+const messageForm = document.querySelector("form");
 
 const socket = new WebSocket(`ws://${window.location.host}`)
 
@@ -44,6 +45,18 @@ socket.addEventListener("close", () => {
 });
 
 // 4. 프론트가 백으로 메시지를 보내는 법
-setTimeout(() => {
-    socket.send("브라우저가 인사를 합니다 : 방가워!");
-},5000);
+// setTimeout(() => {
+//     socket.send("브라우저가 인사를 합니다 : 방가워!");
+// },5000);
+
+function handleSubmit (event) {
+    event.preventDefault();
+    const input = messageForm.querySelector("input");
+    // console.log(input.value);
+    //FE에서 BE로 보냄
+    socket.send(input.value);
+    //input 창을 비워줌
+    input.value = "";
+};
+
+messageForm.addEventListener('submit', handleSubmit);

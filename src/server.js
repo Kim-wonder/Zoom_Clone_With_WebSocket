@@ -50,20 +50,48 @@ const wss = new WebSocket.Server({ server });
 // }
 // wss.on("connection", handleConnection)
 
+const sockets = [];
+//connection에 연결된 모든 브라우저들을 모아둔다.
+
+
 //connection이 생겼을 때 socket으로 즉시 메시지를 send함. => 프론트(app.js)에서도 socket을 만들었다.
+//connection 이벤트가 없어도 백과 프론트는 연결이 되지만
+//이벤트가 없으면 백은 아무런 반응을 하지 않는다.
+//이벤트 안에 있는 특정 소켓socket들은(소켓.on/소켓.send) 서버에 연결된 것이 아니라 소켓 자체에 연결된 것
+//socket.on("message")는 소켓이! 메시지를 받았을 때 반응하는 이벤트임. (왜냐면 서버를 소켓이 감싸고 있기 때문)
 wss.on("connection", (socket) => {
+    sockets.push(socket);
     //1. 브라우저와 연결됐을 때
     console.log("브라우저와 연결되었습니다.");
     //3. 브라우저와 연결이 종료됐을 때
     socket.on("close", () => {
         console.log("브라우저와; 연결이 종료되었습니다.");
     });
+//function onSocketClose() {
+//  console.log("브라우저와 연결이 종료되었습니다.");
+//} => 이렇게 선언 후
+//socket.on("close", onSocketClose);
+//라고 해도 된다.
+
     //4. 프론트가 보낸 메시지 받기
+    //user가 보낸 메시지를 다시 보내주자!
     socket.on("message", (message) => {
         console.log(message.toString());
+        // socket.send(message.toString());
+        sockets.forEach(aSocket => aSocket.send(message.toString()));
     });
+    
+    // socket.on("message", (message) => {
+    //     console.log(message.toString());
+    // });
+//function onSocketMessage() {
+//  console.log(message.toString());
+//} => 이렇게 선언 후
+//socket.on("message", onSocketMessage);
+//라고 해도 된다.
     //2. 백에서 브라우저로 메시지 보내기
-    socket.send("안녕!");
+    // socket.send("안녕!");
 });
 
 server.listen(3000,handleListen);
+
