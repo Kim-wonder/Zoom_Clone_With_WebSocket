@@ -10,5 +10,40 @@
 // 저장하고 이 페이지로 돌아와서 저장을 하려 해도 콘솔이 변화하지 않아! 새로고침되지 않으니까!!
 // 하지만 server.js에서 저장을 하면 터미널이 움직이는 걸 볼 수 있다.
 
+// alert('hello world!');
 
-alert('hello world!');
+
+const socket = new WebSocket(`ws://${window.location.host}`)
+
+//server에서 connection을 만들고 
+//프론트에서도 socket을 만들었다.
+
+//첫번째 연결 :: open (connection 되면 확인 가능)
+socket.addEventListener("open", () => {
+    console.log("서버와 연결되었습니다. :)");
+});
+//function handleOpen() {
+//  console.log("서버와 연결되었습니다. :)");
+//} => 이렇게 작성 후
+//socket.addEventListener("open", handleOpen);
+//라고 해도 된다.
+
+//두번째 연결 :: message (message를 받을 때 마다 확인 가능)
+socket.addEventListener("message", (message) => {
+    console.log("새로운 메시지 :", message.data);
+});
+//function handleMessage() {
+//  console.log("새로운 메시지 :", message.data);
+//} => 이렇게 작성 후
+//socket.addEventListener("message", handleMessage);
+//라고 해도 된다.
+
+//세번째 연결 :: close (server와 연결이 종료되었을 때 확인 가능)
+socket.addEventListener("close", () => {
+    console.log("서버와 연결이 종료되었습니다.");
+});
+
+// 4. 프론트가 백으로 메시지를 보내는 법
+setTimeout(() => {
+    socket.send("브라우저가 인사를 합니다 : 방가워!");
+},5000);
